@@ -1,5 +1,7 @@
 package com.outerspace.baking.model;
 
+import android.accounts.NetworkErrorException;
+
 import androidx.core.util.Consumer;
 
 import com.google.gson.Gson;
@@ -17,8 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RecipeModel {
 
-    public static void fetchRecipeList(Consumer<List<Recipe>> recipeListConsumer) {
-        //GRACE
+    public static void fetchRecipeList(Consumer<List<Recipe>> recipeListConsumer, Consumer<Integer> networkErrorConsumer) {
         Gson gson = new GsonBuilder().setLenient().excludeFieldsWithoutExposeAnnotation().create();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -30,15 +31,15 @@ public class RecipeModel {
 
         Call<List<Recipe>> recipeListCall = apiRecipeList.callRecipeList();
 
-        recipeListCall.enqueue(getCallback(recipeListConsumer));
+        recipeListCall.enqueue(getCallback(recipeListConsumer, networkErrorConsumer));
     }
 
-    private static Callback<List<Recipe>> getCallback(Consumer<List<Recipe>> recipeListConsumer) {
+    private static Callback<List<Recipe>> getCallback(Consumer<List<Recipe>> recipeListConsumer, Consumer<Integer> networkErrorConsumer) {
         return new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if(response.code() != HttpURLConnection.HTTP_OK) {
-                    recipeListConsumer.accept(null);
+                    networkErrorConsumer.accept(response.code());
                 } else {
                     recipeListConsumer.accept(response.body());
                 }
@@ -46,7 +47,7 @@ public class RecipeModel {
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                recipeListConsumer.accept(null);
+                networkErrorConsumer.accept(HttpURLConnection.HTTP_BAD_REQUEST);
             }
         };
     }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="progress_bar_size">50dp</dimen>
+
+    <dimen name="recipeListMargin">16dp</dimen>
+    <dimen name="recipeListCardHeight">64dp</dimen>
+    <dimen name="recipeListTextSize">18sp</dimen>
+    <dimen name="recipeListBorderWidth">2dp</dimen>
+    <dimen name="recipeListCornerRadius">7dp</dimen>
+</resources>

@@ -30,8 +30,9 @@ public class RecipeModelTest {
     public void fetchRecipeListTest() {
 
         TestConsumer<List<Recipe>> consumer = new TestConsumer<>();
+        TestConsumer<Integer> errorConsumer = new TestConsumer<>();
 
-        RecipeModel.fetchRecipeList(consumer);
+        RecipeModel.fetchRecipeList(consumer, errorConsumer);
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
