@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,7 +23,7 @@ import com.outerspace.baking.databinding.FragmentRecipeDetailBinding;
 import com.outerspace.baking.viewmodel.MainViewModel;
 
 public class RecipeDetailFragment extends Fragment {
-    private IMainView mainView;
+    private MainViewModel mainViewModel;
     private FragmentRecipeDetailBinding binding;
     private RecipeDetailAdapter adapter;
 
@@ -31,6 +32,7 @@ public class RecipeDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mainViewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_detail, container, false);
         return binding.getRoot();
     }
@@ -39,24 +41,13 @@ public class RecipeDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding.detailRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new RecipeDetailAdapter();
-        adapter.setViewModel(mainView.getViewModel());
+        adapter = new RecipeDetailAdapter(mainViewModel);
         binding.detailRecycler.setAdapter(adapter);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if(context instanceof IMainView) {
-            mainView = (IMainView) context;
-        } else {
-            throw new ClassCastException("Must implement IMainView");
-        }
     }
 
     public Observer<Recipe> getRecipeObserver() {
         return recipe -> {
-            mainView.movePagerTo(IMainView.RECIPE_DETAIL_PAGE);
+            mainViewModel.getMutableViewPagerPage().setValue(IMainView.RECIPE_DETAIL_PAGE);
             adapter.setRecipe(getContext(), recipe);
         };
     }

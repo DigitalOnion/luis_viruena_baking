@@ -29,7 +29,12 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
     private Recipe recipe;
     private MainViewModel mainViewModel;
 
+    public RecipeDetailAdapter(MainViewModel mainViewModel) {
+        this.mainViewModel = mainViewModel;
+    }
+
     public void setRecipe(Context context, Recipe recipe) {
+        items.clear();
         DetailIngredients ingredients = new DetailIngredients();
         ingredients.title = context.getString(R.string.ingredients);
         ingredients.ingredients = ingredientsToString(recipe.ingredients);
@@ -48,10 +53,6 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
         return ingredientList.stream()
                 .map(ingredient -> ingredient.quantity + " " + ingredient.measure + " " + ingredient.ingredient)
                 .reduce("", String::concat);
-    }
-
-    public void setViewModel(ViewModel viewModel) {
-        this.mainViewModel = (MainViewModel) viewModel;
     }
 
     @NonNull
@@ -90,8 +91,4 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
             super(itemView);
         }
     }
-
-
-
-
 }

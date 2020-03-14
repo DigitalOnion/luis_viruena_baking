@@ -3,6 +3,7 @@ package com.outerspace.baking.model;
 import android.accounts.NetworkErrorException;
 
 import androidx.core.util.Consumer;
+import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,6 +19,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RecipeModel {
+
+    public static void fetchRecipeList(MutableLiveData<List<Recipe>> mutableRecipeList, MutableLiveData<Integer> mutableErrorCode) {
+        fetchRecipeList(mutableRecipeList::setValue,  mutableErrorCode::setValue);
+    }
 
     public static void fetchRecipeList(Consumer<List<Recipe>> recipeListConsumer, Consumer<Integer> networkErrorConsumer) {
         Gson gson = new GsonBuilder().setLenient().excludeFieldsWithoutExposeAnnotation().create();
@@ -38,10 +43,10 @@ public class RecipeModel {
         return new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
-                if(response.code() != HttpURLConnection.HTTP_OK) {
-                    networkErrorConsumer.accept(response.code());
-                } else {
+                if (response.code() == HttpURLConnection.HTTP_OK) {
                     recipeListConsumer.accept(response.body());
+                } else {
+                    networkErrorConsumer.accept(response.code());
                 }
             }
 

@@ -22,13 +22,15 @@ class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeVie
     private List<Recipe> recipeList = new ArrayList<>();
     private MainViewModel mainViewModel;
 
-    public void setRecipeList(@Nullable List<Recipe> recipeList) {
-        this.recipeList = recipeList == null ? new ArrayList<>() : recipeList;
-        notifyDataSetChanged();
+    public RecipeListAdapter(MainViewModel mainViewModel) {
+        this.mainViewModel = mainViewModel;
     }
 
-    public void setViewModel(ViewModel viewModel) {
-        this.mainViewModel = (MainViewModel) viewModel;
+    public void setRecipeList(@Nullable List<Recipe> recipeList) {
+        this.recipeList = recipeList == null
+                ? new ArrayList<>()
+                : recipeList;
+        notifyDataSetChanged();
     }
 
     @NonNull

@@ -9,10 +9,4 @@ public interface IMainView {
     final static int RECIPE_LIST_PAGE = 0;
     final static int RECIPE_DETAIL_PAGE = 1;
     final static int RECIPE_STEPS_PAGE = 2;
-
-    void onNetworkError(Integer networkError);
-    void onProgress(boolean show);
-    boolean isSmallScreen();
-    MainViewModel getViewModel();
-    void movePagerTo(int page);
 }
