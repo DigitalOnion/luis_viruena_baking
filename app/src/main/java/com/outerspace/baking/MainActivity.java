@@ -32,7 +32,7 @@ import com.outerspace.baking.viewmodel.MainViewModel;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
-public class MainActivity extends AppCompatActivity implements IMainView
+public class MainActivity extends AppCompatActivity implements IMainView, OnSwipeGestureListener
 {
     private ActivityMainBinding binding;
     private MainViewModel mainViewModel;
@@ -87,6 +87,11 @@ public class MainActivity extends AppCompatActivity implements IMainView
                     .setNegativeButton(R.string.back_to_app, null)
                     .create().show();
         }
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return false;
     }
 
     private class MainPagerAdapter extends FragmentStatePagerAdapter {

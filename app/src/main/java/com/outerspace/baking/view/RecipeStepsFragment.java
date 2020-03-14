@@ -25,10 +25,13 @@ import com.outerspace.baking.helper.OnSwipeGestureListener;
 import com.outerspace.baking.viewmodel.MainViewModel;
 import com.outerspace.baking.viewmodel.RecipeStepsViewModel;
 
-public class RecipeStepsFragment extends Fragment {
+import java.util.Locale;
+
+public class RecipeStepsFragment extends Fragment implements OnSwipeGestureListener {
     private FragmentRecipeStepsBinding binding;
     private MainViewModel mainViewModel;
     private RecipeStepsViewModel stepsViewModel;
+    private GestureDetectorCompat gestureDetector;
 
     public RecipeStepsFragment() { }
 
@@ -49,6 +52,13 @@ public class RecipeStepsFragment extends Fragment {
             binding.fullDescription.setText(detailIngredients.ingredients);
         });
 
+        gestureDetector = new GestureDetectorCompat(getActivity(), this);
+
+        binding.getRoot().setOnTouchListener((view, event) -> {
+            view.performClick();
+            return gestureDetector.onTouchEvent(event);
+        });
+
         return binding.getRoot();
     }
 
@@ -60,5 +70,19 @@ public class RecipeStepsFragment extends Fragment {
             else
                 stepsViewModel.getMutableDetailInstructions().setValue((DetailIngredients) detailItem);
         };
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        float rate = Math.abs(velocityX) < 0.01f ? 100f : Math.abs(velocityY/ velocityX);
+        if(rate > 1.0f) {
+            if(velocityY > 0.0f) {
+                // swipe down
+            } else {
+                // swipe up
+            }
+            return true;
+        }
+        return false;
     }
 }
