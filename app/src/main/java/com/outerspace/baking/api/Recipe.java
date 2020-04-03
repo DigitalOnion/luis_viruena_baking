@@ -24,4 +24,6 @@ public class Recipe {
     @SerializedName("image")
     @Expose
     public String image;
+
+    public Boolean selected;
 }

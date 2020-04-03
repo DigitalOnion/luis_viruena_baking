@@ -3,26 +3,17 @@ package com.outerspace.baking;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.outerspace.baking.databinding.ActivityMainBinding;
-import com.outerspace.baking.databinding.FragmentRecipeDetailNStepBinding;
 import com.outerspace.baking.helper.OnSwipeGestureListener;
+import com.outerspace.baking.model.RecipeModel;
 import com.outerspace.baking.view.IMainView;
 import com.outerspace.baking.view.RecipeDetailFragment;
 import com.outerspace.baking.view.RecipeDetailNStepFragment;
@@ -51,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
         mainViewModel.getMutableRecipe().observe(this, detailFragment.getRecipeObserver());
         mainViewModel.getMutableViewPagerPage().observe(this,
                 page -> binding.viewPager.setCurrentItem(arrayPages[page], true));
+        mainViewModel.getMutableDetailOffset().observe(this, detailFragment::moveDetailRelative);
         mainViewModel.getMutableDetailItem().observe(this, stepsFragment.getDetailObserver());
 
         mainViewModel.setSmallScreen(binding.phoneScreenLayout != null);
@@ -73,6 +65,11 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
                     BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, fragmentArray);
             binding.viewPager.setAdapter(adapter);
         }
+
+        mainViewModel.getMutableOnProgress().setValue(true);
+        RecipeModel.fetchRecipeList(
+                mainViewModel.getMutableRecipeList(),
+                mainViewModel.getMutableNetworkError());
     }
 
     @Override
@@ -88,21 +85,22 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
                     .create().show();
         }
     }
+// TODO: Remove
+//    @Override
+//    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+//        return false;
+//    }
 
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        return false;
-    }
-
-    private class MainPagerAdapter extends FragmentStatePagerAdapter {
+    private static class MainPagerAdapter extends FragmentStatePagerAdapter {
         private Fragment[] fragments;
 
-        public MainPagerAdapter(@NonNull FragmentManager fm, int behavior, Fragment[] fragments) {
+        MainPagerAdapter(@NonNull FragmentManager fm, int behavior, Fragment[] fragments) {
             super(fm, behavior);
             this.fragments = fragments;
         }
 
         @Override
+        @NonNull
         public Fragment getItem(int position) {
             return fragments[position];
         }

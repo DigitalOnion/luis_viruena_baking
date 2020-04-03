@@ -7,4 +7,8 @@
     <dimen name="recipeListTextSize">18sp</dimen>
     <dimen name="recipeListBorderWidth">2dp</dimen>
     <dimen name="recipeListCornerRadius">7dp</dimen>
+
+    <dimen name="stepMargin">16dp</dimen>
+    <dimen name="stepNameTextSize">24sp</dimen>
+    <dimen name="stepFullDescriptionTextSize">16sp</dimen>
 </resources>

@@ -2,13 +2,11 @@ package com.outerspace.baking.view;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.outerspace.baking.R;
@@ -28,6 +26,7 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
     private List<DetailItem> items = new ArrayList<>();
     private Recipe recipe;
     private MainViewModel mainViewModel;
+    private int selectedPosition = -1;
 
     public RecipeDetailAdapter(MainViewModel mainViewModel) {
         this.mainViewModel = mainViewModel;
@@ -60,15 +59,19 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
     public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         ItemRecipeListBinding binding = DataBindingUtil.inflate(inflater, R.layout.item_recipe_list, parent, false);
-        RecipeViewHolder holder = new RecipeViewHolder(binding.getRoot());
-        holder.setBinding(binding);
-        return holder;
+        return new RecipeViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         holder.binding.itemName.setText(items.get(position).title);
         holder.item = items.get(position);
+        holder.binding.itemLayout.setBackgroundResource(
+                items.get(position).selected ?
+                        R.drawable.border_selected_recipe_list_card :
+                        R.drawable.border_recipe_list_card);
+        //holder.binding.itemLayout.setBackgroundColor(items.get(position).selected ? colorSelected : colorNormal);
+        holder.binding.itemLayout.setOnClickListener(view -> onClickDetail(position));
     }
 
     @Override
@@ -80,15 +83,29 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
         DetailItem item;
         ItemRecipeListBinding binding;
 
-        public void setBinding(ItemRecipeListBinding binding) {
+        public RecipeViewHolder(@NonNull ItemRecipeListBinding binding) {
+            super(binding.getRoot());
             this.binding = binding;
-            binding.itemLayout.setOnClickListener(view -> mainViewModel
-                    .getMutableDetailItem()
-                    .setValue(item));
         }
+    }
 
-        public RecipeViewHolder(@NonNull View itemView) {
-            super(itemView);
+    public void moveDetailRelative(int offset) {
+        onClickDetail(selectedPosition + offset);
+    }
+
+    private void onClickDetail(int position) {
+        if(position < 0 || position >= items.size()) { return; }
+
+        mainViewModel
+                .getMutableDetailItem()
+                .setValue(items.get(position));
+
+        items.get(position).selected = true;
+        notifyItemChanged(position);
+        if(selectedPosition >=0 && selectedPosition < items.size()) {
+            items.get(selectedPosition).selected = false;
+            notifyItemChanged(selectedPosition);
         }
+        selectedPosition = position;
     }
 }

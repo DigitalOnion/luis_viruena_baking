@@ -45,6 +45,10 @@ public class RecipeDetailFragment extends Fragment {
         binding.detailRecycler.setAdapter(adapter);
     }
 
+    public void moveDetailRelative(int offset) {
+        adapter.moveDetailRelative(offset);
+    }
+
     public Observer<Recipe> getRecipeObserver() {
         return recipe -> {
             mainViewModel.getMutableViewPagerPage().setValue(IMainView.RECIPE_DETAIL_PAGE);

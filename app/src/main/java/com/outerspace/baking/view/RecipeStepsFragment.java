@@ -6,15 +6,15 @@ import androidx.annotation.NonNull;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.view.GestureDetector;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.outerspace.baking.R;
 import com.outerspace.baking.databinding.FragmentRecipeStepsBinding;
@@ -24,8 +24,6 @@ import com.outerspace.baking.helper.DetailStep;
 import com.outerspace.baking.helper.OnSwipeGestureListener;
 import com.outerspace.baking.viewmodel.MainViewModel;
 import com.outerspace.baking.viewmodel.RecipeStepsViewModel;
-
-import java.util.Locale;
 
 public class RecipeStepsFragment extends Fragment implements OnSwipeGestureListener {
     private FragmentRecipeStepsBinding binding;
@@ -76,10 +74,10 @@ public class RecipeStepsFragment extends Fragment implements OnSwipeGestureListe
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         float rate = Math.abs(velocityX) < 0.01f ? 100f : Math.abs(velocityY/ velocityX);
         if(rate > 1.0f) {
-            if(velocityY > 0.0f) {
-                // swipe down
+            if(velocityY < 0.0f) {
+                mainViewModel.getMutableDetailOffset().setValue(+1);
             } else {
-                // swipe up
+                mainViewModel.getMutableDetailOffset().setValue(-1);
             }
             return true;
         }

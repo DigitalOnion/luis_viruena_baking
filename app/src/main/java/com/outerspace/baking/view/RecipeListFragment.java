@@ -32,11 +32,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeListFragment extends Fragment {
+    private final static String SELECTED_POSITION = "selected_position";
+
     private MainViewModel mainViewModel;
     private FragmentRecipeListBinding binding;
+    private RecipeListAdapter adapter;
 
-    public RecipeListFragment() {
-    }
+    public RecipeListFragment() { }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -54,13 +56,17 @@ public class RecipeListFragment extends Fragment {
                         new LinearLayoutManager(getContext()) :
                         new GridLayoutManager(getContext(), getResources().getInteger(R.integer.column_count_on_tablet))
         );
-        RecipeListAdapter adapter = new RecipeListAdapter(mainViewModel);
+
+        int selectedPosition = savedInstanceState == null? -1 : savedInstanceState.getInt(SELECTED_POSITION, -1);
+        adapter = new RecipeListAdapter(mainViewModel);
+        adapter.setSelectedPosition(selectedPosition);
         binding.recipeRecycler.setAdapter(adapter);
         mainViewModel.getMutableRecipeList().observe(this, adapter::setRecipeList);
+    }
 
-        mainViewModel.getMutableOnProgress().setValue(true);
-        RecipeModel.fetchRecipeList(
-                mainViewModel.getMutableRecipeList(),
-                mainViewModel.getMutableNetworkError());
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(SELECTED_POSITION, adapter.getSelectedPosition());
+        super.onSaveInstanceState(outState);
     }
 }

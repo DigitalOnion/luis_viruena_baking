@@ -1,8 +1,5 @@
 package com.outerspace.baking.viewmodel;
 
-import android.view.View;
-
-import androidx.databinding.BindingAdapter;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -18,10 +15,11 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<List<Recipe>> mutableRecipeList = new MutableLiveData<>();
     public MutableLiveData<List<Recipe>> getMutableRecipeList() { return mutableRecipeList; }
 
+    private MutableLiveData<Integer> mutableDetailOffset = new MutableLiveData<>();
+    public MutableLiveData<Integer> getMutableDetailOffset() { return mutableDetailOffset; }
+
     private MutableLiveData<DetailItem> mutableDetailItem = new MutableLiveData<>();
-    public MutableLiveData<DetailItem> getMutableDetailItem() {
-        return mutableDetailItem;
-    }
+    public MutableLiveData<DetailItem> getMutableDetailItem() { return mutableDetailItem; }
 
     private MutableLiveData<Boolean> mutableOnProgress = new MutableLiveData<>();
     public MutableLiveData<Boolean> getMutableOnProgress() { return mutableOnProgress; }
@@ -37,5 +35,4 @@ public class MainViewModel extends ViewModel {
     public boolean isSmallScreen() { return isSmallScreen; }
 
     public void setSmallScreen(boolean smallScreen) { isSmallScreen = smallScreen; }
-
 }
