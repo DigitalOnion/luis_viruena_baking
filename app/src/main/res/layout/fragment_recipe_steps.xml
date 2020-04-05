@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
             name="viewModel"
             type="com.outerspace.baking.viewmodel.RecipeStepsViewModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:clickable="true"
         android:focusable="true"
@@ -29,17 +29,39 @@
 
         <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/player"
-            android:visibility="gone"
+            app:use_controller="true"
+            app:show_timeout="@integer/half_a_second"
+            app:hide_on_touch="true"
+            android:visibility="visible"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="4:3"
             app:layout_constraintTop_toBottomOf="@id/stepName" />
 
         <TextView
             android:id="@+id/fullDescription"
+            android:visibility="visible"
             style="@style/step_full_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/player" />
+
+        <WebView
+            android:id="@+id/ingredient_table"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/fullDescription"/>
+
+        <ProgressBar
+            android:id="@+id/step_video_progress"
+            android:visibility="gone"
+            android:layout_width="@dimen/progress_bar_size"
+            android:layout_height="@dimen/progress_bar_size"
+            app:layout_constraintTop_toTopOf="@id/player"
+            app:layout_constraintBottom_toBottomOf="@id/player"
+            app:layout_constraintStart_toStartOf="@id/player"
+            app:layout_constraintEnd_toEndOf="@id/player"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

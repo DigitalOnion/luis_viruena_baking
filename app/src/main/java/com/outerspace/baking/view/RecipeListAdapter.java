@@ -80,10 +80,6 @@ class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeVie
     }
 
     private void onClickItem(Recipe recipe, int position) {
-        mainViewModel
-                .getMutableRecipe()
-                .setValue(recipe);
-
         recipeList.get(position).selected = true;
         notifyItemChanged(position);
         if(selectedPosition >= 0 && selectedPosition < recipeList.size()) {
@@ -91,5 +87,9 @@ class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeVie
             notifyItemChanged(selectedPosition);
         }
         selectedPosition = position;
+
+        mainViewModel
+                .getMutableRecipe()
+                .setValue(recipe);
     }
 }

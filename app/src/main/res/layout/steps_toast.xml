@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toast_layout"
+    android:layout_gravity="end"
+    android:background="@drawable/border_steps_toast"
+    android:paddingEnd="@dimen/stepMargin"
+    android:paddingStart="@dimen/stepMargin"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/toast_message"
+        android:textSize="@dimen/stepFullDescriptionTextSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/toast_message"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/swipe_down"/>
+
+    <ImageView
+        android:id="@+id/swipe_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_swipe_up"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/toast_message"
+        />
+
+    <ImageView
+        android:id="@+id/swipe_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_swipe_down"
+        app:layout_constraintTop_toBottomOf="@id/swipe_up"
+        app:layout_constraintStart_toEndOf="@id/toast_message"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

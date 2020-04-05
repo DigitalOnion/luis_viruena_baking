@@ -6,4 +6,6 @@
     <string name="wanna_exit">Do you want to exit the Baking App?</string>
     <string name="exit_app">Exit</string>
     <string name="back_to_app">Stay</string>
+
+    <string name="toast_message">Swipe up or down for other steps</string>
 </resources>

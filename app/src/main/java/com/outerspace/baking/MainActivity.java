@@ -39,11 +39,7 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
         RecipeStepsFragment stepsFragment = new RecipeStepsFragment();
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        mainViewModel.getMutableRecipe().observe(this, detailFragment.getRecipeObserver());
-        mainViewModel.getMutableViewPagerPage().observe(this,
-                page -> binding.viewPager.setCurrentItem(arrayPages[page], true));
-        mainViewModel.getMutableDetailOffset().observe(this, detailFragment::moveDetailRelative);
-        mainViewModel.getMutableDetailItem().observe(this, stepsFragment.getDetailObserver());
+        mainViewModel.getMutableViewPagerPage().observe(this, this::viewPagerToPage);
 
         mainViewModel.setSmallScreen(binding.phoneScreenLayout != null);
 
@@ -70,6 +66,14 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
         RecipeModel.fetchRecipeList(
                 mainViewModel.getMutableRecipeList(),
                 mainViewModel.getMutableNetworkError());
+    }
+
+    private void viewPagerToPage(int page) {
+        new Thread(() -> {
+            binding.viewPager.postDelayed(
+                    () -> binding.viewPager.setCurrentItem(arrayPages[page], true),
+                    getResources().getInteger(R.integer.third_of_a_second));
+        }).start();
     }
 
     @Override

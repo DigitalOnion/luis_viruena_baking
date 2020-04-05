@@ -67,10 +67,13 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // retrofit and gson
-    implementation 'com.squareup.retrofit2:retrofit:2.7.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.7.2'
     implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
     implementation 'com.google.code.gson:gson:2.8.6'
 
     // Exoplayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.9.5'
+    //implementation 'com.google.android.exoplayer:exoplayer:2.9.5'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.10.5'
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.10.5'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.10.5'
 }

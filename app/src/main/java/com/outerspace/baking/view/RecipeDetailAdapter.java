@@ -49,9 +49,13 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
     }
 
     private String ingredientsToString(List<Ingredient> ingredientList) {
-        return ingredientList.stream()
-                .map(ingredient -> ingredient.quantity + " " + ingredient.measure + " " + ingredient.ingredient)
+        String content =  ingredientList.stream()
+                .map(ingredient -> "<tr><td>" + ingredient.quantity +
+                        "</td><td>" + ingredient.measure +
+                        "</td><td>" + ingredient.ingredient +
+                        "</td></tr>\n")
                 .reduce("", String::concat);
+        return "<table>" + content + "</table>";
     }
 
     @NonNull
@@ -96,10 +100,6 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
     private void onClickDetail(int position) {
         if(position < 0 || position >= items.size()) { return; }
 
-        mainViewModel
-                .getMutableDetailItem()
-                .setValue(items.get(position));
-
         items.get(position).selected = true;
         notifyItemChanged(position);
         if(selectedPosition >=0 && selectedPosition < items.size()) {
@@ -107,5 +107,9 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
             notifyItemChanged(selectedPosition);
         }
         selectedPosition = position;
+
+        mainViewModel
+                .getMutableDetailItem()
+                .setValue(items.get(position));
     }
 }

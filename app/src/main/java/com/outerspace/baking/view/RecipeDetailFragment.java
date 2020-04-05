@@ -27,13 +27,24 @@ public class RecipeDetailFragment extends Fragment {
     private FragmentRecipeDetailBinding binding;
     private RecipeDetailAdapter adapter;
 
-    public RecipeDetailFragment() { }
+    public RecipeDetailFragment() {
+    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mainViewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_detail, container, false);
+
+        mainViewModel.getMutableRecipe().observe(getActivity(), recipe -> {
+            mainViewModel.getMutableViewPagerPage().setValue(IMainView.RECIPE_DETAIL_PAGE);
+            adapter.setRecipe(getActivity().getApplicationContext(), recipe);
+        });
+
+        mainViewModel.getMutableDetailOffset().observe(getActivity(), offset -> {
+            adapter.moveDetailRelative(offset);
+        });
+
         return binding.getRoot();
     }
 
@@ -43,16 +54,5 @@ public class RecipeDetailFragment extends Fragment {
         binding.detailRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new RecipeDetailAdapter(mainViewModel);
         binding.detailRecycler.setAdapter(adapter);
-    }
-
-    public void moveDetailRelative(int offset) {
-        adapter.moveDetailRelative(offset);
-    }
-
-    public Observer<Recipe> getRecipeObserver() {
-        return recipe -> {
-            mainViewModel.getMutableViewPagerPage().setValue(IMainView.RECIPE_DETAIL_PAGE);
-            adapter.setRecipe(getContext(), recipe);
-        };
     }
 }
