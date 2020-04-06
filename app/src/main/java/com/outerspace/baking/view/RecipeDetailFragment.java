@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,9 +43,9 @@ public class RecipeDetailFragment extends Fragment {
             adapter.setRecipe(getActivity().getApplicationContext(), recipe);
         });
 
-        mainViewModel.getMutableDetailOffset().observe(getActivity(), offset -> {
-            adapter.moveDetailRelative(offset);
-        });
+        MutableLiveData<Integer> mutableOffset = new MutableLiveData<>();
+        mutableOffset.observe(getActivity(), offset -> adapter.moveDetailRelative(offset));
+        mainViewModel.setMutableDetailOffset(mutableOffset);
 
         return binding.getRoot();
     }

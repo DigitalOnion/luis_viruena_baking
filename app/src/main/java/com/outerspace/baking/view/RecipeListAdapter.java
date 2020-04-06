@@ -91,6 +91,8 @@ class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeVie
 
         mainViewModel.getMutableRecipe()
                 .setValue(recipe);
+        mainViewModel.getMutableDetailItem()
+                .setValue(null);
         mainViewModel.getMutableViewPagerPage()
                 .setValue(IMainView.RECIPE_DETAIL_PAGE);
     }

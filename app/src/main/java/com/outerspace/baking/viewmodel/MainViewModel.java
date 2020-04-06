@@ -10,27 +10,30 @@ import com.outerspace.baking.view.IMainView;
 import java.util.List;
 
 public class MainViewModel extends ViewModel {
-    private MutableLiveData<Recipe> mutableRecipe = new MutableLiveData<>();
-    public MutableLiveData<Recipe> getMutableRecipe() { return mutableRecipe; }
-
+    // mutableRecipeList and MutableNetworkError do not need to have a setter. They work on the network call.
     private MutableLiveData<List<Recipe>> mutableRecipeList = new MutableLiveData<>();
     public MutableLiveData<List<Recipe>> getMutableRecipeList() { return mutableRecipeList; }
 
-    private MutableLiveData<Integer> mutableDetailOffset = new MutableLiveData<>();
-    public MutableLiveData<Integer> getMutableDetailOffset() { return mutableDetailOffset; }
-
-    private MutableLiveData<DetailItem> mutableDetailItem = new MutableLiveData<>();
-    public MutableLiveData<DetailItem> getMutableDetailItem() { return mutableDetailItem; }
+    private MutableLiveData<Integer> mutableNetworkError = new MutableLiveData<>();
+    public MutableLiveData<Integer> getMutableNetworkError() { return mutableNetworkError; }
 
     private MutableLiveData<Boolean> mutableOnProgress = new MutableLiveData<>();
     public MutableLiveData<Boolean> getMutableOnProgress() { return mutableOnProgress; }
 
+    private MutableLiveData<Recipe> mutableRecipe = new MutableLiveData<>();
+    public MutableLiveData<Recipe> getMutableRecipe() { return mutableRecipe; }
+
+    private MutableLiveData<DetailItem> mutableDetailItem = new MutableLiveData<>();
+    public MutableLiveData<DetailItem> getMutableDetailItem() { return mutableDetailItem; }
+
+    // other mutable data are presenting a bug if the mutable is assigned before the observer is subscribed
+    private MutableLiveData<Integer> mutableDetailOffset = new MutableLiveData<>();
+    public MutableLiveData<Integer> getMutableDetailOffset() { return mutableDetailOffset; }
+    public void setMutableDetailOffset(MutableLiveData<Integer> mutableDetailOffset) { this.mutableDetailOffset = mutableDetailOffset; }
+
     private MutableLiveData<Integer> mutableViewPagerPage = null; // LateInit: new MutableLiveData<>();
     public MutableLiveData<Integer> getMutableViewPagerPage() { return mutableViewPagerPage; }
     public void setMutableViewPagerPage(MutableLiveData<Integer> mutableViewPagerPage) { this.mutableViewPagerPage = mutableViewPagerPage; }
-
-    private MutableLiveData<Integer> mutableNetworkError = new MutableLiveData<>();
-    public MutableLiveData<Integer> getMutableNetworkError() { return mutableNetworkError; }
 
     private boolean isSmallScreen;
 

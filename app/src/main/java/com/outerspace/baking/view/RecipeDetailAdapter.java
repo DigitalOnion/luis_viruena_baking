@@ -44,8 +44,9 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
             detailStep.step = step;
             detailItemList.add(detailStep);
         }
-        if(selectedPosition > -1 && selectedPosition < detailItemList.size())
+        if(selectedPosition > -1 && selectedPosition < detailItemList.size()) {
             detailItemList.get(selectedPosition).selected = true;
+        }
         notifyDataSetChanged();
     }
 

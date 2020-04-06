@@ -1,22 +1,15 @@
 package com.outerspace.baking.view;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.text.HtmlCompat;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.text.Spanned;
-import android.text.SpannedString;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,16 +18,6 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.outerspace.baking.R;
 import com.outerspace.baking.databinding.FragmentRecipeStepsBinding;
 import com.outerspace.baking.helper.DetailIngredients;
@@ -42,17 +25,11 @@ import com.outerspace.baking.helper.DetailItem;
 import com.outerspace.baking.helper.DetailStep;
 import com.outerspace.baking.helper.OnSwipeGestureListener;
 import com.outerspace.baking.viewmodel.MainViewModel;
-import com.outerspace.baking.viewmodel.RecipeStepsViewModel;
-
-import timber.log.Timber;
-
 
 public class RecipeStepsFragment extends Fragment implements OnSwipeGestureListener {
     private FragmentRecipeStepsBinding binding;
     private MainViewModel mainViewModel;
-    private RecipeStepsViewModel stepsViewModel;
     private GestureDetectorCompat gestureDetector;
-    private static SimpleExoPlayer simpleExo;
 
     public RecipeStepsFragment() {
     }
@@ -60,40 +37,16 @@ public class RecipeStepsFragment extends Fragment implements OnSwipeGestureListe
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
-        stepsViewModel = new ViewModelProvider(this).get(RecipeStepsViewModel.class);
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_steps, container, false);
-        binding.setViewModel(stepsViewModel);
 
         mainViewModel.getMutableDetailItem().observe(getActivity(), detailItem -> {
-            if (detailItem instanceof DetailStep)
-                stepsViewModel.getMutableDetailStep().setValue((DetailStep) detailItem);
+            if(detailItem == null) {
+                clearUpStepsScreen();
+            } else if (detailItem instanceof DetailStep)
+                presentDetailStep((DetailStep) detailItem);
             else
-                stepsViewModel.getMutableDetailInstructions().setValue((DetailIngredients) detailItem);
-        });
-
-        stepsViewModel.getMutableDetailStep().observe(this, detailStep -> {
-            binding.stepName.setText(detailStep.title);
-            binding.fullDescription.setText(detailStep.step.description);
-            binding.ingredientTable.setVisibility(View.GONE);
-            binding.fullDescription.setVisibility(View.VISIBLE);
-            String videoUrl = detailStep.step.videoURL;
-            if (!videoUrl.isEmpty()) {
-                binding.player.start(videoUrl);
-            } else {
-                binding.player.stop();
-            }
-        });
-
-        stepsViewModel.getMutableDetailInstructions().observe(this, detailIngredients -> {
-            binding.fullDescription.setVisibility(View.GONE);
-            binding.player.stop();
-            binding.ingredientTable.setVisibility(View.VISIBLE);
-            binding.ingredientTable.setBackgroundColor(Color.TRANSPARENT);
-            binding.ingredientTable.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
-
-            binding.stepName.setText(detailIngredients.title);
-            binding.ingredientTable.loadData(detailIngredients.ingredients, "text/html", "utf-8");
+                presentDetailIngredients((DetailIngredients) detailItem);
         });
 
         gestureDetector = new GestureDetectorCompat(getActivity(), this);
@@ -128,17 +81,62 @@ public class RecipeStepsFragment extends Fragment implements OnSwipeGestureListe
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        // rate = |velocityY/VelocityX|; it tells the direction of the swipe.
+        // rate > 1 ==> greater than 45 degrees => swipe up or down
+        // the test is in case velocityX equal or close to zero
         float rate = Math.abs(velocityX) < 0.01f ? 100f : Math.abs(velocityY / velocityX);
         if (rate > 1.0f) {
-            if (velocityY < 0.0f) {
-                binding.player.stop();
-                mainViewModel.getMutableDetailOffset().setValue(+1);
-            } else {
-                binding.player.stop();
-                mainViewModel.getMutableDetailOffset().setValue(-1);
+            if(Math.abs(velocityY) > (float) getResources().getInteger(R.integer.min_swipe_velocity)) {
+                // above the speed limit to consider it a swipe
+                if (velocityY < 0.0f) {
+                    binding.player.stop();
+                    mainViewModel.getMutableDetailOffset().setValue(+1);
+                } else {
+                    binding.player.stop();
+                    mainViewModel.getMutableDetailOffset().setValue(-1);
+                }
             }
             return true;
         }
         return false;
+    }
+
+    private void presentDetailStep(DetailStep detailStep) {
+        binding.stepName.setVisibility(View.VISIBLE);
+        binding.fullDescription.setVisibility(View.VISIBLE);
+        binding.ingredientTable.setVisibility(View.GONE);
+
+        binding.stepName.setText(detailStep.title);
+        binding.fullDescription.setText(detailStep.step.description);
+
+        String videoUrl = detailStep.step.videoURL;
+        if (videoUrl.isEmpty())  {
+            binding.player.setVisibility(View.GONE);
+            binding.player.stop();
+        } else {
+            binding.player.setVisibility(View.VISIBLE);
+            binding.player.start(videoUrl);
+        }
+    }
+
+    private void presentDetailIngredients(DetailIngredients detailIngredients) {
+        binding.stepName.setVisibility(View.VISIBLE);
+        binding.fullDescription.setVisibility(View.GONE);
+        binding.ingredientTable.setVisibility(View.VISIBLE);
+
+        binding.stepName.setText(detailIngredients.title);
+        binding.ingredientTable.setBackgroundColor(Color.TRANSPARENT);
+        binding.ingredientTable.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
+        binding.ingredientTable.loadData(detailIngredients.ingredients, "text/html", "utf-8");
+        binding.player.setVisibility(View.GONE);
+        binding.player.stop();
+    }
+
+    private void clearUpStepsScreen() {
+        binding.stepName.setVisibility(View.GONE);
+        binding.fullDescription.setVisibility(View.GONE);
+        binding.ingredientTable.setVisibility(View.GONE);
+        binding.player.setVisibility(View.GONE);
+        binding.player.stop();
     }
 }
