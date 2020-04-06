@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.RecipeViewHolder> {
-    private List<DetailItem> items = new ArrayList<>();
+    private List<DetailItem> detailItemList = new ArrayList<>();
     private Recipe recipe;
     private MainViewModel mainViewModel;
     private int selectedPosition = -1;
@@ -33,19 +32,29 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
     }
 
     public void setRecipe(Context context, Recipe recipe) {
-        items.clear();
+        detailItemList.clear();
         DetailIngredients ingredients = new DetailIngredients();
         ingredients.title = context.getString(R.string.ingredients);
         ingredients.ingredients = ingredientsToString(recipe.ingredients);
-        items.add(ingredients);
+        detailItemList.add(ingredients);
 
         for(Step step : recipe.steps) {
             DetailStep detailStep = new DetailStep();
             detailStep.title = step.shortDescription;
             detailStep.step = step;
-            items.add(detailStep);
+            detailItemList.add(detailStep);
         }
+        if(selectedPosition > -1 && selectedPosition < detailItemList.size())
+            detailItemList.get(selectedPosition).selected = true;
         notifyDataSetChanged();
+    }
+
+    public int getSelectedPosition() {
+        return selectedPosition;
+    }
+
+    public void setSelectedPosition(int selectedPosition) {
+        this.selectedPosition = selectedPosition;
     }
 
     private String ingredientsToString(List<Ingredient> ingredientList) {
@@ -68,19 +77,18 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
 
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
-        holder.binding.itemName.setText(items.get(position).title);
-        holder.item = items.get(position);
+        holder.binding.itemName.setText(detailItemList.get(position).title);
+        holder.item = detailItemList.get(position);
         holder.binding.itemLayout.setBackgroundResource(
-                items.get(position).selected ?
+                detailItemList.get(position).selected ?
                         R.drawable.border_selected_recipe_list_card :
                         R.drawable.border_recipe_list_card);
-        //holder.binding.itemLayout.setBackgroundColor(items.get(position).selected ? colorSelected : colorNormal);
         holder.binding.itemLayout.setOnClickListener(view -> onClickDetail(position));
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return detailItemList.size();
     }
 
     public class RecipeViewHolder extends RecyclerView.ViewHolder {
@@ -98,18 +106,19 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
     }
 
     private void onClickDetail(int position) {
-        if(position < 0 || position >= items.size()) { return; }
+        if(position < 0 || position >= detailItemList.size()) { return; }
 
-        items.get(position).selected = true;
+        detailItemList.get(position).selected = true;
         notifyItemChanged(position);
-        if(selectedPosition >=0 && selectedPosition < items.size()) {
-            items.get(selectedPosition).selected = false;
+        if(selectedPosition != position && selectedPosition >=0 && selectedPosition < detailItemList.size()) {
+            detailItemList.get(selectedPosition).selected = false;
             notifyItemChanged(selectedPosition);
         }
         selectedPosition = position;
 
-        mainViewModel
-                .getMutableDetailItem()
-                .setValue(items.get(position));
+        mainViewModel.getMutableDetailItem()
+                .setValue(detailItemList.get(position));
+        mainViewModel.getMutableViewPagerPage()
+                .setValue(IMainView.RECIPE_STEPS_PAGE);
     }
 }

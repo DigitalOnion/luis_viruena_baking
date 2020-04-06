@@ -6,62 +6,59 @@
             name="viewModel"
             type="com.outerspace.baking.viewmodel.RecipeStepsViewModel" />
     </data>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:tools="http://schemas.android.com/tools"
-        android:clickable="true"
-        android:focusable="true"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingStart="@dimen/stepMargin"
-        android:paddingEnd="@dimen/stepMargin"
-        android:background="@color/beer_yellow"
-        tools:context=".view.RecipeListFragment">
+        android:background="@color/beer_yellow">
 
-        <TextView
-            android:id="@+id/stepName"
-            style="@style/step_name"
-            android:layout_gravity="top"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <com.google.android.exoplayer2.ui.PlayerView
-            android:id="@+id/player"
-            app:use_controller="true"
-            app:show_timeout="@integer/half_a_second"
-            app:hide_on_touch="true"
-            android:visibility="visible"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintDimensionRatio="4:3"
-            app:layout_constraintTop_toBottomOf="@id/stepName" />
-
-        <TextView
-            android:id="@+id/fullDescription"
-            android:visibility="visible"
-            style="@style/step_full_description"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            xmlns:tools="http://schemas.android.com/tools"
+            android:clickable="true"
+            android:focusable="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/player" />
+            android:paddingStart="@dimen/stepMargin"
+            android:paddingEnd="@dimen/stepMargin"
+            android:background="@color/beer_yellow"
+            tools:context=".view.RecipeListFragment">
 
-        <WebView
-            android:id="@+id/ingredient_table"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/fullDescription"/>
+            <TextView
+                android:id="@+id/stepName"
+                style="@style/step_name"
+                android:layout_gravity="top"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
-        <ProgressBar
-            android:id="@+id/step_video_progress"
-            android:visibility="gone"
-            android:layout_width="@dimen/progress_bar_size"
-            android:layout_height="@dimen/progress_bar_size"
-            app:layout_constraintTop_toTopOf="@id/player"
-            app:layout_constraintBottom_toBottomOf="@id/player"
-            app:layout_constraintStart_toStartOf="@id/player"
-            app:layout_constraintEnd_toEndOf="@id/player"/>
+            <com.outerspace.baking.exo.BPlayerView
+                android:id="@+id/player"
+                app:use_controller="true"
+                app:show_timeout="@integer/half_a_second"
+                app:hide_on_touch="true"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="4:3"
+                app:layout_constraintTop_toBottomOf="@id/stepName" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/fullDescription"
+                android:visibility="gone"
+                style="@style/step_full_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/player" />
+
+            <WebView
+                tools:ignore="WebViewLayout"
+                android:id="@+id/ingredient_table"
+                android:visibility="visible"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/fullDescription"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </layout>

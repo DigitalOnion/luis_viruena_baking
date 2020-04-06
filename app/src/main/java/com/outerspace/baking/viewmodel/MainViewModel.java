@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.outerspace.baking.api.Recipe;
 import com.outerspace.baking.helper.DetailItem;
+import com.outerspace.baking.view.IMainView;
 
 import java.util.List;
 
@@ -24,8 +25,9 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<Boolean> mutableOnProgress = new MutableLiveData<>();
     public MutableLiveData<Boolean> getMutableOnProgress() { return mutableOnProgress; }
 
-    private MutableLiveData<Integer> mutableViewPagerPage = new MutableLiveData<>();
+    private MutableLiveData<Integer> mutableViewPagerPage = null; // LateInit: new MutableLiveData<>();
     public MutableLiveData<Integer> getMutableViewPagerPage() { return mutableViewPagerPage; }
+    public void setMutableViewPagerPage(MutableLiveData<Integer> mutableViewPagerPage) { this.mutableViewPagerPage = mutableViewPagerPage; }
 
     private MutableLiveData<Integer> mutableNetworkError = new MutableLiveData<>();
     public MutableLiveData<Integer> getMutableNetworkError() { return mutableNetworkError; }

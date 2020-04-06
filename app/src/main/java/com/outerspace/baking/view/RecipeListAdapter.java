@@ -60,8 +60,9 @@ class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeVie
                 holder.recipe.selected ?
                         R.drawable.border_selected_recipe_list_card :
                         R.drawable.border_recipe_list_card);
-        //holder.binding.itemLayout.setBackgroundColor(holder.recipe.selected ? colorSelected : colorNormal);
-        holder.binding.itemLayout.setOnClickListener(view -> onClickItem(holder.recipe, position));
+        holder.binding.itemLayout.setOnClickListener(
+                view ->
+                        onClickItem(holder.recipe, position));
     }
 
     @Override
@@ -82,14 +83,15 @@ class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeVie
     private void onClickItem(Recipe recipe, int position) {
         recipeList.get(position).selected = true;
         notifyItemChanged(position);
-        if(selectedPosition >= 0 && selectedPosition < recipeList.size()) {
+        if(selectedPosition != position && selectedPosition >= 0 && selectedPosition < recipeList.size()) {
             recipeList.get(selectedPosition).selected = false;
             notifyItemChanged(selectedPosition);
         }
         selectedPosition = position;
 
-        mainViewModel
-                .getMutableRecipe()
+        mainViewModel.getMutableRecipe()
                 .setValue(recipe);
+        mainViewModel.getMutableViewPagerPage()
+                .setValue(IMainView.RECIPE_DETAIL_PAGE);
     }
 }

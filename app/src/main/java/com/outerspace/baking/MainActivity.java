@@ -7,7 +7,9 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 
@@ -20,6 +22,8 @@ import com.outerspace.baking.view.RecipeDetailNStepFragment;
 import com.outerspace.baking.view.RecipeListFragment;
 import com.outerspace.baking.view.RecipeStepsFragment;
 import com.outerspace.baking.viewmodel.MainViewModel;
+
+import timber.log.Timber;
 
 import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
@@ -34,13 +38,15 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
+        if(BuildConfig.DEBUG){
+            Timber.plant(new Timber.DebugTree());
+        }
+
         RecipeListFragment listFragment = new RecipeListFragment();
         RecipeDetailFragment detailFragment = new RecipeDetailFragment();
         RecipeStepsFragment stepsFragment = new RecipeStepsFragment();
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        mainViewModel.getMutableViewPagerPage().observe(this, this::viewPagerToPage);
-
         mainViewModel.setSmallScreen(binding.phoneScreenLayout != null);
 
         if (mainViewModel.isSmallScreen()) {
@@ -51,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
             MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager(),
                     BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, fragmentArray);
             binding.viewPager.setAdapter(adapter);
+            binding.viewPager.setOffscreenPageLimit(2);
         } else {
             RecipeDetailNStepFragment detailNStepFragment = new RecipeDetailNStepFragment();
             detailNStepFragment.addComposedFragment(detailFragment);
@@ -60,7 +67,15 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
             MainPagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager(),
                     BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, fragmentArray);
             binding.viewPager.setAdapter(adapter);
+            binding.viewPager.setOffscreenPageLimit(1);
         }
+
+        // this form (add the observer before setting the mutableViewPagerPage)
+        // is needed to prevent a weird bug. The viewPager was moving without
+        // calling setValue on rotation
+        MutableLiveData<Integer> mutable = new MutableLiveData<>();
+        mutable.observe(this, this::viewPagerToPage);
+        mainViewModel.setMutableViewPagerPage(mutable);
 
         mainViewModel.getMutableOnProgress().setValue(true);
         RecipeModel.fetchRecipeList(
@@ -89,11 +104,6 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
                     .create().show();
         }
     }
-// TODO: Remove
-//    @Override
-//    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-//        return false;
-//    }
 
     private static class MainPagerAdapter extends FragmentStatePagerAdapter {
         private Fragment[] fragments;

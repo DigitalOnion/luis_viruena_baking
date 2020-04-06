@@ -23,6 +23,8 @@ import com.outerspace.baking.databinding.FragmentRecipeDetailBinding;
 import com.outerspace.baking.viewmodel.MainViewModel;
 
 public class RecipeDetailFragment extends Fragment {
+    private final static String SELECTED_POSITION = "selected_position";
+
     private MainViewModel mainViewModel;
     private FragmentRecipeDetailBinding binding;
     private RecipeDetailAdapter adapter;
@@ -37,7 +39,6 @@ public class RecipeDetailFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_detail, container, false);
 
         mainViewModel.getMutableRecipe().observe(getActivity(), recipe -> {
-            mainViewModel.getMutableViewPagerPage().setValue(IMainView.RECIPE_DETAIL_PAGE);
             adapter.setRecipe(getActivity().getApplicationContext(), recipe);
         });
 
@@ -52,7 +53,15 @@ public class RecipeDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         binding.detailRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        int selectedPosition = savedInstanceState == null ? -1 : savedInstanceState.getInt(SELECTED_POSITION, -1);
         adapter = new RecipeDetailAdapter(mainViewModel);
+        adapter.setSelectedPosition(selectedPosition);
         binding.detailRecycler.setAdapter(adapter);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt(SELECTED_POSITION, adapter.getSelectedPosition());
+        super.onSaveInstanceState(outState);
     }
 }
