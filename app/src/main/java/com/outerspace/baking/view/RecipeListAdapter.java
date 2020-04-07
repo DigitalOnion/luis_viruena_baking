@@ -26,21 +26,11 @@ class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeVie
     }
 
     public void setRecipeList(@Nullable List<Recipe> recipeList) {
-        recipeList.forEach(recipe -> recipe.selected = false);
+        //recipeList.forEach(recipe -> recipe.selected = false);
         this.recipeList = recipeList == null
                 ? new ArrayList<>()
                 : recipeList;
-        if(selectedPosition > -1 && selectedPosition < recipeList.size())
-            recipeList.get(selectedPosition).selected = true;
         notifyDataSetChanged();
-    }
-
-    public int getSelectedPosition() {
-        return selectedPosition;
-    }
-
-    public void setSelectedPosition(int selectedPosition) {
-        this.selectedPosition = selectedPosition;
     }
 
     @NonNull
@@ -80,19 +70,27 @@ class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeVie
     }
 
     private void onClickItem(Recipe recipe, int position) {
-        recipeList.get(position).selected = true;
-        notifyItemChanged(position);
-        if(selectedPosition != position && selectedPosition >= 0 && selectedPosition < recipeList.size()) {
-            recipeList.get(selectedPosition).selected = false;
-            notifyItemChanged(selectedPosition);
-        }
-        selectedPosition = position;
-
         mainViewModel.getMutableRecipe()
                 .setValue(recipe);
+        mainViewModel.getMutableRecipeSelection()
+                .setValue(position);
         mainViewModel.getMutableStep()
                 .setValue(null);
         mainViewModel.getMutableViewPagerPage()
                 .setValue(IMainView.RECIPE_DETAIL_PAGE);
+
+        mainViewModel.getMutableRecipeList().setValue(recipeList);
+    }
+
+    public void selectPosition(int position) {
+        if(position >= 0 && position < recipeList.size()) {
+            recipeList.get(position).selected = true;
+            //notifyItemChanged(position);
+        }
+        if(selectedPosition != position && selectedPosition >= 0 && selectedPosition < recipeList.size()) {
+            recipeList.get(selectedPosition).selected = false;
+            //notifyItemChanged(selectedPosition);
+        }
+        selectedPosition = position;
     }
 }

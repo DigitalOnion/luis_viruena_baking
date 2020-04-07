@@ -25,7 +25,16 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<StepAbstract> mutableStep = new MutableLiveData<>();
     public MutableLiveData<StepAbstract> getMutableStep() { return mutableStep; }
 
-    // other mutable data are presenting a bug if the mutable is assigned before the observer is subscribed
+    private MutableLiveData<Integer> mutableRecipeSelection = new MutableLiveData<>();
+    public MutableLiveData<Integer> getMutableRecipeSelection() { return mutableRecipeSelection; }
+
+    private MutableLiveData<Integer> mutableStepSelection = new MutableLiveData<>();
+    public MutableLiveData<Integer> getMutableStepSelection() { return mutableStepSelection; }
+
+    // I was finding a bug with MutableLiveData<Integer> the observer was fired before setValue,
+    // because the Integer sets the default value when created
+    // the solution I found is to add the observer before assigning the MutableLiveData
+
     private MutableLiveData<Integer> mutableDetailOffset = new MutableLiveData<>();
     public MutableLiveData<Integer> getMutableDetailOffset() { return mutableDetailOffset; }
     public void setMutableDetailOffset(MutableLiveData<Integer> mutableDetailOffset) { this.mutableDetailOffset = mutableDetailOffset; }

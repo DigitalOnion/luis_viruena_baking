@@ -12,8 +12,10 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 
+import com.outerspace.baking.api.Recipe;
 import com.outerspace.baking.databinding.ActivityMainBinding;
 import com.outerspace.baking.helper.OnSwipeGestureListener;
+import com.outerspace.baking.helper.StepAbstract;
 import com.outerspace.baking.model.RecipeModel;
 import com.outerspace.baking.view.IMainView;
 import com.outerspace.baking.view.RecipeStepsFragment;
@@ -21,6 +23,8 @@ import com.outerspace.baking.view.RecipeStepXDetailFragment;
 import com.outerspace.baking.view.RecipeListFragment;
 import com.outerspace.baking.view.RecipeDetailFragment;
 import com.outerspace.baking.viewmodel.MainViewModel;
+
+import java.util.List;
 
 import timber.log.Timber;
 
@@ -76,10 +80,28 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
         mutable.observe(this, this::viewPagerToPage);
         mainViewModel.setMutableViewPagerPage(mutable);
 
-        mainViewModel.getMutableOnProgress().setValue(true);
-        RecipeModel.fetchRecipeList(
-                mainViewModel.getMutableRecipeList(),
-                mainViewModel.getMutableNetworkError());
+        List<Recipe> recipeList = mainViewModel.getMutableRecipeList().getValue();
+        if( recipeList == null) {
+            mainViewModel.getMutableOnProgress().setValue(true);
+            RecipeModel.fetchRecipeList(
+                    mainViewModel.getMutableRecipeList(),
+                    mainViewModel.getMutableNetworkError());
+        } else {
+            mainViewModel.getMutableRecipeList().setValue(recipeList);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Recipe recipe = mainViewModel.getMutableRecipe().getValue();
+        if(recipe != null) {
+            mainViewModel.getMutableRecipe().setValue(recipe);
+            StepAbstract step = mainViewModel.getMutableStep().getValue();
+            if(step != null) {
+                mainViewModel.getMutableStep().setValue(step);
+            }
+        }
     }
 
     private void viewPagerToPage(int page) {

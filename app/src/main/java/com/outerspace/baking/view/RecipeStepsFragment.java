@@ -32,14 +32,6 @@ public class RecipeStepsFragment extends Fragment {
         mainViewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_steps, container, false);
 
-        mainViewModel.getMutableRecipe().observe(getActivity(), recipe -> {
-            adapter.setRecipe(getActivity().getApplicationContext(), recipe);
-        });
-
-        MutableLiveData<Integer> mutableOffset = new MutableLiveData<>();
-        mutableOffset.observe(getActivity(), offset -> adapter.moveDetailRelative(offset));
-        mainViewModel.setMutableDetailOffset(mutableOffset);
-
         return binding.getRoot();
     }
 
@@ -49,5 +41,15 @@ public class RecipeStepsFragment extends Fragment {
         binding.detailRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new RecipeStepAdapter(mainViewModel);
         binding.detailRecycler.setAdapter(adapter);
+
+        mainViewModel.getMutableRecipe().observe(getActivity(), recipe -> {
+            adapter.setRecipe(getActivity().getApplicationContext(), recipe);
+        });
+
+        mainViewModel.getMutableStepSelection().observe(getActivity(), adapter::selectPosition);
+
+        MutableLiveData<Integer> mutableOffset = new MutableLiveData<>();
+        mutableOffset.observe(getActivity(), offset -> adapter.moveDetailRelative(offset));
+        mainViewModel.setMutableDetailOffset(mutableOffset);
     }
 }

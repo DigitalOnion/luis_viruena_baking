@@ -25,5 +25,5 @@ public class Recipe {
     @Expose
     public String image;
 
-    public Boolean selected;
+    public Boolean selected = false;
 }

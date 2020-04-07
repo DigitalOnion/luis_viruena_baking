@@ -44,18 +44,10 @@ class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.RecipeVie
             stepDescription.step = step;
             stepAbstractList.add(stepDescription);
         }
-        if(selectedPosition > -1 && selectedPosition < stepAbstractList.size()) {
-            stepAbstractList.get(selectedPosition).selected = true;
-        }
+//        if(selectedPosition > -1 && selectedPosition < stepAbstractList.size()) {
+//            stepAbstractList.get(selectedPosition).selected = true;
+//        }
         notifyDataSetChanged();
-    }
-
-    public int getSelectedPosition() {
-        return selectedPosition;
-    }
-
-    public void setSelectedPosition(int selectedPosition) {
-        this.selectedPosition = selectedPosition;
     }
 
     private String ingredientsToString(List<Ingredient> ingredientList) {
@@ -103,23 +95,29 @@ class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.RecipeVie
     }
 
     public void moveDetailRelative(int offset) {
-        onClickDetail(selectedPosition + offset);
+        if(selectedPosition + offset >=0 && selectedPosition + offset < stepAbstractList.size()) {
+            onClickDetail(selectedPosition + offset);
+        }
     }
 
     private void onClickDetail(int position) {
-        if(position < 0 || position >= stepAbstractList.size()) { return; }
+        mainViewModel.getMutableStep()
+                .setValue(stepAbstractList.get(position));
+        mainViewModel.getMutableStepSelection()
+                .setValue(position);
+        mainViewModel.getMutableViewPagerPage()
+                .setValue(IMainView.RECIPE_STEPS_PAGE);
+    }
 
-        stepAbstractList.get(position).selected = true;
-        notifyItemChanged(position);
+    public void selectPosition(int position) {
+        if(position >= 0 && position < stepAbstractList.size()) {
+            stepAbstractList.get(position).selected = true;
+            notifyItemChanged(position);
+        }
         if(selectedPosition != position && selectedPosition >=0 && selectedPosition < stepAbstractList.size()) {
             stepAbstractList.get(selectedPosition).selected = false;
             notifyItemChanged(selectedPosition);
         }
         selectedPosition = position;
-
-        mainViewModel.getMutableStep()
-                .setValue(stepAbstractList.get(position));
-        mainViewModel.getMutableViewPagerPage()
-                .setValue(IMainView.RECIPE_STEPS_PAGE);
     }
 }
