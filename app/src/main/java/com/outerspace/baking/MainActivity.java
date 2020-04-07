@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.outerspace.baking.api.Recipe;
 import com.outerspace.baking.databinding.ActivityMainBinding;
@@ -79,6 +80,9 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
         MutableLiveData<Integer> mutable = new MutableLiveData<>();
         mutable.observe(this, this::viewPagerToPage);
         mainViewModel.setMutableViewPagerPage(mutable);
+
+        mainViewModel.getMutableOnProgress().observe(this, showProgress ->
+                binding.progress.setVisibility(showProgress ? View.VISIBLE : View.GONE));
 
         List<Recipe> recipeList = mainViewModel.getMutableRecipeList().getValue();
         if( recipeList == null) {

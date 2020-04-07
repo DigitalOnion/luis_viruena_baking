@@ -20,4 +20,19 @@
         <item name="android:layout_marginTop">@dimen/stepMargin</item>
     </style>
 
+    <style name="splash_title_style" parent="AppTheme">
+        <item name="fontFamily">sans-serif-black</item>\
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/splash_text_color</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="splash_message_style" parent="splash_title_style">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="splash_credits_style" parent="splash_title_style">
+        <item name="android:textSize">24sp</item>
+    </style>
+
 </resources>

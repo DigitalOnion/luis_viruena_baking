@@ -58,8 +58,10 @@ public class RecipeListFragment extends Fragment {
 
         adapter = new RecipeListAdapter(mainViewModel);
         binding.recipeRecycler.setAdapter(adapter);
-        mainViewModel.getMutableRecipeList().observe(getActivity(),
-                adapter::setRecipeList);
+        mainViewModel.getMutableRecipeList().observe(getActivity(), recipeList -> {
+                    mainViewModel.getMutableOnProgress().setValue(false);
+                    adapter.setRecipeList(recipeList);
+                });
         mainViewModel.getMutableRecipeSelection().observe(getActivity(),
                 adapter::selectPosition);
     }

@@ -8,4 +8,7 @@
     <color name="moon_like_blue">#D3D3FF</color>
     <color name="beer_yellow">#FFFEE8</color>
     <color name="green_selected_item">#BBFF00</color>
+
+    <color name="splash_pink">#FF49BB</color>
+    <color name="splash_text_color">#8C2766</color>
 </resources>
