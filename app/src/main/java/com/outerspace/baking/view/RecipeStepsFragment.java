@@ -15,12 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.outerspace.baking.R;
-import com.outerspace.baking.databinding.FragmentRecipeDetailBinding;
+import com.outerspace.baking.databinding.FragmentRecipeStepsBinding;
 import com.outerspace.baking.viewmodel.MainViewModel;
 
 public class RecipeStepsFragment extends Fragment {
     private MainViewModel mainViewModel;
-    private FragmentRecipeDetailBinding binding;
+    private FragmentRecipeStepsBinding binding;
     private RecipeStepAdapter adapter;
 
     public RecipeStepsFragment() {

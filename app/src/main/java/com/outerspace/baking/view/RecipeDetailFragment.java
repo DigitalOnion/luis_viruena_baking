@@ -18,14 +18,14 @@ import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.outerspace.baking.R;
-import com.outerspace.baking.databinding.FragmentRecipeStepsBinding;
+import com.outerspace.baking.databinding.FragmentRecipeDetailBinding;
 import com.outerspace.baking.helper.StepIngredients;
 import com.outerspace.baking.helper.StepDescription;
 import com.outerspace.baking.helper.OnSwipeGestureListener;
 import com.outerspace.baking.viewmodel.MainViewModel;
 
 public class RecipeDetailFragment extends Fragment implements OnSwipeGestureListener {
-    private FragmentRecipeStepsBinding binding;
+    private FragmentRecipeDetailBinding binding;
     private MainViewModel mainViewModel;
     private GestureDetectorCompat gestureDetector;
 
