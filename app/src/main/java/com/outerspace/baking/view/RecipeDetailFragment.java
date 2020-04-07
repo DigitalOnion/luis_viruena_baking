@@ -1,68 +1,140 @@
 package com.outerspace.baking.view;
 
-import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.core.view.GestureDetectorCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.outerspace.baking.R;
-import com.outerspace.baking.api.Recipe;
-import com.outerspace.baking.databinding.FragmentRecipeDetailBinding;
+import com.outerspace.baking.databinding.FragmentRecipeStepsBinding;
+import com.outerspace.baking.helper.StepIngredients;
+import com.outerspace.baking.helper.StepDescription;
+import com.outerspace.baking.helper.OnSwipeGestureListener;
 import com.outerspace.baking.viewmodel.MainViewModel;
 
-public class RecipeDetailFragment extends Fragment {
-    private final static String SELECTED_POSITION = "selected_position";
-
+public class RecipeDetailFragment extends Fragment implements OnSwipeGestureListener {
+    private FragmentRecipeStepsBinding binding;
     private MainViewModel mainViewModel;
-    private FragmentRecipeDetailBinding binding;
-    private RecipeDetailAdapter adapter;
+    private GestureDetectorCompat gestureDetector;
 
     public RecipeDetailFragment() {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mainViewModel = new ViewModelProvider(getActivity()).get(MainViewModel.class);
+
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_detail, container, false);
 
-        mainViewModel.getMutableRecipe().observe(getActivity(), recipe -> {
-            adapter.setRecipe(getActivity().getApplicationContext(), recipe);
+        mainViewModel.getMutableStep().observe(getActivity(), step -> {
+            if(step == null) {
+                clearUpStepsScreen();
+            } else if (step instanceof StepDescription)
+                presentDetailStep((StepDescription) step);
+            else
+                presentDetailIngredients((StepIngredients) step);
         });
 
-        MutableLiveData<Integer> mutableOffset = new MutableLiveData<>();
-        mutableOffset.observe(getActivity(), offset -> adapter.moveDetailRelative(offset));
-        mainViewModel.setMutableDetailOffset(mutableOffset);
+        gestureDetector = new GestureDetectorCompat(getActivity(), this);
+
+        binding.getRoot().setOnTouchListener((view, event) -> {
+            view.performClick();
+            return gestureDetector.onTouchEvent(event);
+        });
 
         return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        binding.detailRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        int selectedPosition = savedInstanceState == null ? -1 : savedInstanceState.getInt(SELECTED_POSITION, -1);
-        adapter = new RecipeDetailAdapter(mainViewModel);
-        adapter.setSelectedPosition(selectedPosition);
-        binding.detailRecycler.setAdapter(adapter);
+    public void onResume() {
+        super.onResume();
+        binding.player.resume();
+
+        View toastLayout = getLayoutInflater().inflate(R.layout.steps_toast,
+                (ViewGroup) getActivity().findViewById(R.id.toast_layout));
+        Toast toast = new Toast(getActivity().getApplicationContext());
+        toast.setGravity(Gravity.BOTTOM, 0, 50);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(toastLayout);
+        toast.show();
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(SELECTED_POSITION, adapter.getSelectedPosition());
-        super.onSaveInstanceState(outState);
+    public void onPause() {
+        binding.player.pause();
+        super.onPause();
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        // rate = |velocityY/VelocityX|; it tells the direction of the swipe.
+        // rate > 1 ==> greater than 45 degrees => swipe up or down
+        // the test is in case velocityX equal or close to zero
+        float rate = Math.abs(velocityX) < 0.01f ? 100f : Math.abs(velocityY / velocityX);
+        if (rate > 1.0f) {
+            if(Math.abs(velocityY) > (float) getResources().getInteger(R.integer.min_swipe_velocity)) {
+                // above the speed limit to consider it a swipe
+                if (velocityY < 0.0f) {
+                    binding.player.stop();
+                    mainViewModel.getMutableDetailOffset().setValue(+1);
+                } else {
+                    binding.player.stop();
+                    mainViewModel.getMutableDetailOffset().setValue(-1);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private void presentDetailStep(StepDescription stepDescription) {
+        binding.stepName.setVisibility(View.VISIBLE);
+        binding.fullDescription.setVisibility(View.VISIBLE);
+        binding.ingredientTable.setVisibility(View.GONE);
+
+        binding.stepName.setText(stepDescription.title);
+        binding.fullDescription.setText(stepDescription.step.description);
+
+        String videoUrl = stepDescription.step.videoURL;
+        if (videoUrl.isEmpty())  {
+            binding.player.setVisibility(View.GONE);
+            binding.player.stop();
+        } else {
+            binding.player.setVisibility(View.VISIBLE);
+            binding.player.start(videoUrl);
+        }
+    }
+
+    private void presentDetailIngredients(StepIngredients stepIngredients) {
+        binding.stepName.setVisibility(View.VISIBLE);
+        binding.fullDescription.setVisibility(View.GONE);
+        binding.ingredientTable.setVisibility(View.VISIBLE);
+
+        binding.stepName.setText(stepIngredients.title);
+        binding.ingredientTable.setBackgroundColor(Color.TRANSPARENT);
+        binding.ingredientTable.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null);
+        binding.ingredientTable.loadData(stepIngredients.ingredients, "text/html", "utf-8");
+        binding.player.setVisibility(View.GONE);
+        binding.player.stop();
+    }
+
+    private void clearUpStepsScreen() {
+        binding.stepName.setVisibility(View.GONE);
+        binding.fullDescription.setVisibility(View.GONE);
+        binding.ingredientTable.setVisibility(View.GONE);
+        binding.player.setVisibility(View.GONE);
+        binding.player.stop();
     }
 }

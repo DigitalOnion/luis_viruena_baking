@@ -1,5 +1,5 @@
 package com.outerspace.baking.helper;
 
-public class DetailIngredients extends DetailItem {
+public class StepIngredients extends StepAbstract {
         public String ingredients;
     }

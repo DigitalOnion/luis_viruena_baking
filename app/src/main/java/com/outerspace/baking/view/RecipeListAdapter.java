@@ -3,7 +3,6 @@ package com.outerspace.baking.view;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
@@ -91,7 +90,7 @@ class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeVie
 
         mainViewModel.getMutableRecipe()
                 .setValue(recipe);
-        mainViewModel.getMutableDetailItem()
+        mainViewModel.getMutableStep()
                 .setValue(null);
         mainViewModel.getMutableViewPagerPage()
                 .setValue(IMainView.RECIPE_DETAIL_PAGE);

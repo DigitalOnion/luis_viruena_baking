@@ -4,8 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.outerspace.baking.api.Recipe;
-import com.outerspace.baking.helper.DetailItem;
-import com.outerspace.baking.view.IMainView;
+import com.outerspace.baking.helper.StepAbstract;
 
 import java.util.List;
 
@@ -23,8 +22,8 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<Recipe> mutableRecipe = new MutableLiveData<>();
     public MutableLiveData<Recipe> getMutableRecipe() { return mutableRecipe; }
 
-    private MutableLiveData<DetailItem> mutableDetailItem = new MutableLiveData<>();
-    public MutableLiveData<DetailItem> getMutableDetailItem() { return mutableDetailItem; }
+    private MutableLiveData<StepAbstract> mutableStep = new MutableLiveData<>();
+    public MutableLiveData<StepAbstract> getMutableStep() { return mutableStep; }
 
     // other mutable data are presenting a bug if the mutable is assigned before the observer is subscribed
     private MutableLiveData<Integer> mutableDetailOffset = new MutableLiveData<>();
@@ -40,4 +39,5 @@ public class MainViewModel extends ViewModel {
     public boolean isSmallScreen() { return isSmallScreen; }
 
     public void setSmallScreen(boolean smallScreen) { isSmallScreen = smallScreen; }
+
 }

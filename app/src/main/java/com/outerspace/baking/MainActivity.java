@@ -9,7 +9,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 
@@ -17,10 +16,10 @@ import com.outerspace.baking.databinding.ActivityMainBinding;
 import com.outerspace.baking.helper.OnSwipeGestureListener;
 import com.outerspace.baking.model.RecipeModel;
 import com.outerspace.baking.view.IMainView;
-import com.outerspace.baking.view.RecipeDetailFragment;
-import com.outerspace.baking.view.RecipeDetailNStepFragment;
-import com.outerspace.baking.view.RecipeListFragment;
 import com.outerspace.baking.view.RecipeStepsFragment;
+import com.outerspace.baking.view.RecipeStepXDetailFragment;
+import com.outerspace.baking.view.RecipeListFragment;
+import com.outerspace.baking.view.RecipeDetailFragment;
 import com.outerspace.baking.viewmodel.MainViewModel;
 
 import timber.log.Timber;
@@ -43,8 +42,8 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
         }
 
         RecipeListFragment listFragment = new RecipeListFragment();
-        RecipeDetailFragment detailFragment = new RecipeDetailFragment();
-        RecipeStepsFragment stepsFragment = new RecipeStepsFragment();
+        RecipeStepsFragment detailFragment = new RecipeStepsFragment();
+        RecipeDetailFragment stepsFragment = new RecipeDetailFragment();
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.setSmallScreen(binding.phoneScreenLayout != null);
@@ -59,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
             binding.viewPager.setAdapter(adapter);
             binding.viewPager.setOffscreenPageLimit(2);
         } else {
-            RecipeDetailNStepFragment detailNStepFragment = new RecipeDetailNStepFragment();
+            RecipeStepXDetailFragment detailNStepFragment = new RecipeStepXDetailFragment();
             detailNStepFragment.addComposedFragment(detailFragment);
             detailNStepFragment.addComposedFragment(stepsFragment);
             arrayPages = new int[] {0, 1, 1};
@@ -123,5 +122,11 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
         public int getCount() {
             return fragments.length;
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+
+        super.onSaveInstanceState(outState);
     }
 }

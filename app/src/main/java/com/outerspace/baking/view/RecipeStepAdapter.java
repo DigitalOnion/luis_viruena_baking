@@ -13,39 +13,39 @@ import com.outerspace.baking.api.Ingredient;
 import com.outerspace.baking.api.Recipe;
 import com.outerspace.baking.api.Step;
 import com.outerspace.baking.databinding.ItemRecipeListBinding;
-import com.outerspace.baking.helper.DetailIngredients;
-import com.outerspace.baking.helper.DetailItem;
-import com.outerspace.baking.helper.DetailStep;
+import com.outerspace.baking.helper.StepIngredients;
+import com.outerspace.baking.helper.StepAbstract;
+import com.outerspace.baking.helper.StepDescription;
 import com.outerspace.baking.viewmodel.MainViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.RecipeViewHolder> {
-    private List<DetailItem> detailItemList = new ArrayList<>();
+class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.RecipeViewHolder> {
+    private List<StepAbstract> stepAbstractList = new ArrayList<>();
     private Recipe recipe;
     private MainViewModel mainViewModel;
     private int selectedPosition = -1;
 
-    public RecipeDetailAdapter(MainViewModel mainViewModel) {
+    public RecipeStepAdapter(MainViewModel mainViewModel) {
         this.mainViewModel = mainViewModel;
     }
 
     public void setRecipe(Context context, Recipe recipe) {
-        detailItemList.clear();
-        DetailIngredients ingredients = new DetailIngredients();
+        stepAbstractList.clear();
+        StepIngredients ingredients = new StepIngredients();
         ingredients.title = context.getString(R.string.ingredients);
         ingredients.ingredients = ingredientsToString(recipe.ingredients);
-        detailItemList.add(ingredients);
+        stepAbstractList.add(ingredients);
 
         for(Step step : recipe.steps) {
-            DetailStep detailStep = new DetailStep();
-            detailStep.title = step.shortDescription;
-            detailStep.step = step;
-            detailItemList.add(detailStep);
+            StepDescription stepDescription = new StepDescription();
+            stepDescription.title = step.shortDescription;
+            stepDescription.step = step;
+            stepAbstractList.add(stepDescription);
         }
-        if(selectedPosition > -1 && selectedPosition < detailItemList.size()) {
-            detailItemList.get(selectedPosition).selected = true;
+        if(selectedPosition > -1 && selectedPosition < stepAbstractList.size()) {
+            stepAbstractList.get(selectedPosition).selected = true;
         }
         notifyDataSetChanged();
     }
@@ -78,10 +78,10 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
 
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
-        holder.binding.itemName.setText(detailItemList.get(position).title);
-        holder.item = detailItemList.get(position);
+        holder.binding.itemName.setText(stepAbstractList.get(position).title);
+        holder.item = stepAbstractList.get(position);
         holder.binding.itemLayout.setBackgroundResource(
-                detailItemList.get(position).selected ?
+                stepAbstractList.get(position).selected ?
                         R.drawable.border_selected_recipe_list_card :
                         R.drawable.border_recipe_list_card);
         holder.binding.itemLayout.setOnClickListener(view -> onClickDetail(position));
@@ -89,11 +89,11 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
 
     @Override
     public int getItemCount() {
-        return detailItemList.size();
+        return stepAbstractList.size();
     }
 
     public class RecipeViewHolder extends RecyclerView.ViewHolder {
-        DetailItem item;
+        StepAbstract item;
         ItemRecipeListBinding binding;
 
         public RecipeViewHolder(@NonNull ItemRecipeListBinding binding) {
@@ -107,18 +107,18 @@ class RecipeDetailAdapter extends RecyclerView.Adapter<RecipeDetailAdapter.Recip
     }
 
     private void onClickDetail(int position) {
-        if(position < 0 || position >= detailItemList.size()) { return; }
+        if(position < 0 || position >= stepAbstractList.size()) { return; }
 
-        detailItemList.get(position).selected = true;
+        stepAbstractList.get(position).selected = true;
         notifyItemChanged(position);
-        if(selectedPosition != position && selectedPosition >=0 && selectedPosition < detailItemList.size()) {
-            detailItemList.get(selectedPosition).selected = false;
+        if(selectedPosition != position && selectedPosition >=0 && selectedPosition < stepAbstractList.size()) {
+            stepAbstractList.get(selectedPosition).selected = false;
             notifyItemChanged(selectedPosition);
         }
         selectedPosition = position;
 
-        mainViewModel.getMutableDetailItem()
-                .setValue(detailItemList.get(position));
+        mainViewModel.getMutableStep()
+                .setValue(stepAbstractList.get(position));
         mainViewModel.getMutableViewPagerPage()
                 .setValue(IMainView.RECIPE_STEPS_PAGE);
     }

@@ -16,14 +16,14 @@ import android.widget.FrameLayout;
 import com.outerspace.baking.R;
 import com.outerspace.baking.databinding.FragmentRecipeDetailNStepBinding;
 
-public class RecipeDetailNStepFragment extends Fragment {
+public class RecipeStepXDetailFragment extends Fragment {
     private IMainView mainView;
     private FragmentRecipeDetailNStepBinding binding;
-    private RecipeDetailFragment detailFragment;
-    private RecipeStepsFragment stepsFragment;
+    private RecipeStepsFragment detailFragment;
+    private RecipeDetailFragment stepsFragment;
 
 
-    public RecipeDetailNStepFragment() { }
+    public RecipeStepXDetailFragment() { }
 
     public FragmentRecipeDetailNStepBinding getBinding() {
         return binding;
@@ -54,8 +54,8 @@ public class RecipeDetailNStepFragment extends Fragment {
     }
 
     public void addComposedFragment(Fragment fragment) {
-        if(fragment instanceof RecipeDetailFragment) detailFragment = (RecipeDetailFragment) fragment;
-        if(fragment instanceof RecipeStepsFragment) stepsFragment = (RecipeStepsFragment) fragment;
+        if(fragment instanceof RecipeStepsFragment) detailFragment = (RecipeStepsFragment) fragment;
+        if(fragment instanceof RecipeDetailFragment) stepsFragment = (RecipeDetailFragment) fragment;
     }
 
     private void appendFragment(FrameLayout layout, Fragment fragment) {
