@@ -3,7 +3,7 @@ package com.outerspace.baking;
 import androidx.core.util.Consumer;
 
 import com.outerspace.baking.api.Recipe;
-import com.outerspace.baking.model.RecipeModel;
+import com.outerspace.baking.model.RecipeModelFactory;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class RecipeModelTest {
         TestConsumer<List<Recipe>> consumer = new TestConsumer<>();
         TestConsumer<Integer> errorConsumer = new TestConsumer<>();
 
-        RecipeModel.fetchRecipeList(consumer, errorConsumer);
+        RecipeModelFactory.getInstance().fetchRecipeList(consumer, errorConsumer);
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {

@@ -1,7 +1,5 @@
 package com.outerspace.baking.model;
 
-import android.accounts.NetworkErrorException;
-
 import androidx.core.util.Consumer;
 import androidx.lifecycle.MutableLiveData;
 
@@ -18,13 +16,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RecipeModel {
+class RecipeModelImpl implements IRecipeModel {
+    RecipeModelImpl() {}
 
-    public static void fetchRecipeList(MutableLiveData<List<Recipe>> mutableRecipeList, MutableLiveData<Integer> mutableErrorCode) {
+    public void fetchRecipeList(MutableLiveData<List<Recipe>> mutableRecipeList, MutableLiveData<Integer> mutableErrorCode) {
         fetchRecipeList(mutableRecipeList::setValue,  mutableErrorCode::setValue);
     }
 
-    public static void fetchRecipeList(Consumer<List<Recipe>> recipeListConsumer, Consumer<Integer> networkErrorConsumer) {
+    public void fetchRecipeList(Consumer<List<Recipe>> recipeListConsumer, Consumer<Integer> networkErrorConsumer) {
         Gson gson = new GsonBuilder().setLenient().excludeFieldsWithoutExposeAnnotation().create();
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -39,7 +38,7 @@ public class RecipeModel {
         recipeListCall.enqueue(getCallback(recipeListConsumer, networkErrorConsumer));
     }
 
-    private static Callback<List<Recipe>> getCallback(Consumer<List<Recipe>> recipeListConsumer, Consumer<Integer> networkErrorConsumer) {
+    private Callback<List<Recipe>> getCallback(Consumer<List<Recipe>> recipeListConsumer, Consumer<Integer> networkErrorConsumer) {
         return new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
@@ -56,5 +55,4 @@ public class RecipeModel {
             }
         };
     }
-
 }

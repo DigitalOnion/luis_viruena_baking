@@ -1,36 +1,22 @@
 package com.outerspace.baking.view;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.util.Consumer;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.TextView;
 
 import com.outerspace.baking.R;
-import com.outerspace.baking.api.Recipe;
 import com.outerspace.baking.databinding.FragmentRecipeListBinding;
-import com.outerspace.baking.databinding.ItemRecipeListBinding;
-import com.outerspace.baking.model.RecipeModel;
 import com.outerspace.baking.viewmodel.MainViewModel;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 
 public class RecipeListFragment extends Fragment {
     private MainViewModel mainViewModel;

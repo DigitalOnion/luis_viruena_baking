@@ -17,7 +17,7 @@ import com.outerspace.baking.api.Recipe;
 import com.outerspace.baking.databinding.ActivityMainBinding;
 import com.outerspace.baking.helper.OnSwipeGestureListener;
 import com.outerspace.baking.helper.StepAbstract;
-import com.outerspace.baking.model.RecipeModel;
+import com.outerspace.baking.model.RecipeModelFactory;
 import com.outerspace.baking.view.IMainView;
 import com.outerspace.baking.view.RecipeStepsFragment;
 import com.outerspace.baking.view.RecipeStepXDetailFragment;
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
         List<Recipe> recipeList = mainViewModel.getMutableRecipeList().getValue();
         if( recipeList == null) {
             mainViewModel.getMutableOnProgress().setValue(true);
-            RecipeModel.fetchRecipeList(
+            RecipeModelFactory.getInstance().fetchRecipeList(
                     mainViewModel.getMutableRecipeList(),
                     mainViewModel.getMutableNetworkError());
         } else {
