@@ -7,6 +7,10 @@
     <string name="wanna_exit">Do you want to exit the Baking App?</string>
     <string name="exit_app">Exit</string>
     <string name="back_to_app">Stay</string>
+    <string name="try_again">Try again</string>
+
+    <string name="network_error_title">network error</string>
+    <string name="network_error_message">There was a network error.\nPlease check your connection or try again later</string>
 
     <string name="toast_message">Swipe up or down for other steps</string>
 

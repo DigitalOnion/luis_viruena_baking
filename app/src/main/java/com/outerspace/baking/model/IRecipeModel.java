@@ -8,7 +8,6 @@ import com.outerspace.baking.api.Recipe;
 import java.util.List;
 
 public interface IRecipeModel {
-    default void setBehavior(String behavior) { /* to use for Unit and Implementation test */ }
     void fetchRecipeList(MutableLiveData<List<Recipe>> mutableRecipeList, MutableLiveData<Integer> mutableErrorCode);
     void fetchRecipeList(Consumer<List<Recipe>> recipeListConsumer, Consumer<Integer> networkErrorConsumer);
 }

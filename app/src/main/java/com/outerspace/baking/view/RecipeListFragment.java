@@ -1,5 +1,6 @@
 package com.outerspace.baking.view;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.outerspace.baking.databinding.FragmentRecipeListBinding;
 import com.outerspace.baking.viewmodel.MainViewModel;
 
 public class RecipeListFragment extends Fragment {
+    private IMainView mainView;
     private MainViewModel mainViewModel;
     private FragmentRecipeListBinding binding;
     private RecipeListAdapter adapter;
@@ -50,5 +52,17 @@ public class RecipeListFragment extends Fragment {
                 });
         mainViewModel.getMutableRecipeSelection().observe(getActivity(),
                 adapter::selectPosition);
+
+        mainViewModel.getMutableNetworkError().observe(getActivity(), httpErrorCode -> {
+            mainViewModel.getMutableOnProgress().setValue(false);
+            mainView.handleNetworkError(httpErrorCode);
+        });
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mainView = (IMainView) context;
+    }
+
 }

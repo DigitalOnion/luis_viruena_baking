@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 
 import com.outerspace.baking.databinding.ActivitySplashBinding;
+import com.outerspace.baking.model.ModelBehavior;
 
 public class SplashActivity extends AppCompatActivity {
     ActivitySplashBinding binding;
@@ -28,6 +29,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void launchMain() {
-        startActivity(new Intent(this, MainActivity.class));
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(MainActivity.EXTRA_BEHAVIOR, ModelBehavior.NETWORK_REQUEST);
+        startActivity(intent);
     }
 }

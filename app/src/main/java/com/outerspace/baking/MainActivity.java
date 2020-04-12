@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
@@ -17,6 +18,8 @@ import com.outerspace.baking.api.Recipe;
 import com.outerspace.baking.databinding.ActivityMainBinding;
 import com.outerspace.baking.helper.OnSwipeGestureListener;
 import com.outerspace.baking.helper.StepAbstract;
+import com.outerspace.baking.model.IRecipeModel;
+import com.outerspace.baking.model.ModelBehavior;
 import com.outerspace.baking.model.RecipeModelFactory;
 import com.outerspace.baking.view.IMainView;
 import com.outerspace.baking.view.RecipeStepsFragment;
@@ -33,6 +36,8 @@ import static androidx.fragment.app.FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CU
 
 public class MainActivity extends AppCompatActivity implements IMainView, OnSwipeGestureListener
 {
+    public static final String EXTRA_BEHAVIOR = "behavior";
+
     private ActivityMainBinding binding;
     private MainViewModel mainViewModel;
     private int[] arrayPages;
@@ -87,12 +92,18 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
         List<Recipe> recipeList = mainViewModel.getMutableRecipeList().getValue();
         if( recipeList == null) {
             mainViewModel.getMutableOnProgress().setValue(true);
-            RecipeModelFactory.getInstance().fetchRecipeList(
-                    mainViewModel.getMutableRecipeList(),
-                    mainViewModel.getMutableNetworkError());
+            fetchRecipeListFromModel();
         } else {
             mainViewModel.getMutableRecipeList().setValue(recipeList);
         }
+    }
+
+    private void fetchRecipeListFromModel() {
+        ModelBehavior behavior = (ModelBehavior) getIntent().getSerializableExtra(EXTRA_BEHAVIOR);
+        IRecipeModel model = new RecipeModelFactory.Builder().setBehavior(behavior).build();
+        model.fetchRecipeList(
+                mainViewModel.getMutableRecipeList(),
+                mainViewModel.getMutableNetworkError());
     }
 
     @Override
@@ -130,6 +141,16 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
         }
     }
 
+    @Override
+    public void handleNetworkError(int httpResponseCode) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.network_error_title)
+                .setMessage(R.string.network_error_message)
+                .setNegativeButton(R.string.exit_app, (dialog, which) -> super.onBackPressed())
+                .setPositiveButton(R.string.try_again, (dialog, which) -> fetchRecipeListFromModel())
+                .create().show();
+    }
+
     private static class MainPagerAdapter extends FragmentStatePagerAdapter {
         private Fragment[] fragments;
 
@@ -148,11 +169,5 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
         public int getCount() {
             return fragments.length;
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-
-        super.onSaveInstanceState(outState);
     }
 }
