@@ -19,12 +19,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public final class RecipeModelFactory {
+    public static final int LONG_RECIPE_LENGTH = 50;
     private static IRecipeModel instance;
 
     private RecipeModelFactory() { }
 
     public final static class Builder {
         private ModelBehavior behavior;
+
         public Builder setBehavior(ModelBehavior behavior) {
             this.behavior = behavior;
             return this;
@@ -42,8 +44,6 @@ public final class RecipeModelFactory {
         }
         return  instance;
     }
-
-    public static final int LONG_RECIPE_LENGTH = 50;
 
     private static IRecipeModel buildInstance(ModelBehavior behavior) {
         return new IRecipeModel() {

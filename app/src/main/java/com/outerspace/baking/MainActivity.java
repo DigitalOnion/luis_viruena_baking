@@ -1,6 +1,7 @@
 package com.outerspace.baking;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -28,6 +29,7 @@ import com.outerspace.baking.view.RecipeListFragment;
 import com.outerspace.baking.view.RecipeDetailFragment;
 import com.outerspace.baking.viewmodel.MainViewModel;
 
+import java.net.HttpURLConnection;
 import java.util.List;
 
 import timber.log.Timber;
@@ -89,6 +91,20 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
         mainViewModel.getMutableOnProgress().observe(this, showProgress ->
                 binding.progress.setVisibility(showProgress ? View.VISIBLE : View.GONE));
 
+        mainViewModel.getMutableNetworkError().observe(this, httpErrorCode -> {
+            mainViewModel.getMutableOnProgress().setValue(false);
+            @StringRes int title = httpErrorCode == HttpURLConnection.HTTP_NO_CONTENT ?
+                    R.string.empty_response_title : R.string.network_error_title;
+            @StringRes int message = httpErrorCode == HttpURLConnection.HTTP_NO_CONTENT ?
+                    R.string.empty_response_message : R.string.network_error_message;
+            new AlertDialog.Builder(this)
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setNegativeButton(R.string.exit_app, (dialog, which) -> super.onBackPressed())
+                    .setPositiveButton(R.string.try_again, (dialog, which) -> fetchRecipeListFromModel())
+                    .create().show();
+        });
+
         List<Recipe> recipeList = mainViewModel.getMutableRecipeList().getValue();
         if( recipeList == null) {
             mainViewModel.getMutableOnProgress().setValue(true);
@@ -139,16 +155,6 @@ public class MainActivity extends AppCompatActivity implements IMainView, OnSwip
                     .setNegativeButton(R.string.back_to_app, null)
                     .create().show();
         }
-    }
-
-    @Override
-    public void handleNetworkError(int httpResponseCode) {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.network_error_title)
-                .setMessage(R.string.network_error_message)
-                .setNegativeButton(R.string.exit_app, (dialog, which) -> super.onBackPressed())
-                .setPositiveButton(R.string.try_again, (dialog, which) -> fetchRecipeListFromModel())
-                .create().show();
     }
 
     private static class MainPagerAdapter extends FragmentStatePagerAdapter {

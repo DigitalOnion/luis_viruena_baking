@@ -19,8 +19,9 @@ import com.outerspace.baking.R;
 import com.outerspace.baking.databinding.FragmentRecipeListBinding;
 import com.outerspace.baking.viewmodel.MainViewModel;
 
+import java.net.HttpURLConnection;
+
 public class RecipeListFragment extends Fragment {
-    private IMainView mainView;
     private MainViewModel mainViewModel;
     private FragmentRecipeListBinding binding;
     private RecipeListAdapter adapter;
@@ -47,22 +48,14 @@ public class RecipeListFragment extends Fragment {
         adapter = new RecipeListAdapter(mainViewModel);
         binding.recipeRecycler.setAdapter(adapter);
         mainViewModel.getMutableRecipeList().observe(getActivity(), recipeList -> {
-                    mainViewModel.getMutableOnProgress().setValue(false);
-                    adapter.setRecipeList(recipeList);
+                    if(recipeList.size() > 0)  {
+                        mainViewModel.getMutableOnProgress().setValue(false);
+                        adapter.setRecipeList(recipeList);
+                    } else {
+                        mainViewModel.getMutableNetworkError().setValue(HttpURLConnection.HTTP_NO_CONTENT);
+                    }
                 });
         mainViewModel.getMutableRecipeSelection().observe(getActivity(),
                 adapter::selectPosition);
-
-        mainViewModel.getMutableNetworkError().observe(getActivity(), httpErrorCode -> {
-            mainViewModel.getMutableOnProgress().setValue(false);
-            mainView.handleNetworkError(httpErrorCode);
-        });
     }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        mainView = (IMainView) context;
-    }
-
 }

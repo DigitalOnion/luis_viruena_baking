@@ -26,12 +26,21 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @RunWith(AndroidJUnit4.class)
-public class BakingBasicTest {
+public class RecipeListLoadingTest {
     private static final boolean INITIAL_TOUCH_MODE = true;
     private static final boolean DO_NOT_LAUNCH_ACTIVITY = false;
 
     @Rule
     public ActivityTestRule<MainActivity> activityTestRule = new ActivityTestRule<>(MainActivity.class, INITIAL_TOUCH_MODE, DO_NOT_LAUNCH_ACTIVITY);
+
+    @Test
+    public void emptyRecipeListTest() {
+        Intent startIntent = new Intent();
+        startIntent.putExtra(MainActivity.EXTRA_BEHAVIOR, ModelBehavior.MOCK_EMPTY_LIST);
+        activityTestRule.launchActivity(startIntent);
+
+        onView(withText(R.string.empty_response_title)).check(matches(isDisplayed()));
+    }
 
     @Test
     public void oneRecordRecipeListTest() {
