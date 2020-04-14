@@ -23,15 +23,14 @@ import java.util.List;
 
 class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.RecipeViewHolder> {
     private List<StepAbstract> stepAbstractList = new ArrayList<>();
-    private Recipe recipe;
     private MainViewModel mainViewModel;
     private int selectedPosition = -1;
 
-    public RecipeStepAdapter(MainViewModel mainViewModel) {
+    RecipeStepAdapter(MainViewModel mainViewModel) {
         this.mainViewModel = mainViewModel;
     }
 
-    public void setRecipe(Context context, Recipe recipe) {
+    void setRecipe(Context context, Recipe recipe) {
         stepAbstractList.clear();
         StepIngredients ingredients = new StepIngredients();
         ingredients.title = context.getString(R.string.ingredients);
@@ -44,9 +43,6 @@ class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.RecipeVie
             stepDescription.step = step;
             stepAbstractList.add(stepDescription);
         }
-//        if(selectedPosition > -1 && selectedPosition < stepAbstractList.size()) {
-//            stepAbstractList.get(selectedPosition).selected = true;
-//        }
         notifyDataSetChanged();
     }
 

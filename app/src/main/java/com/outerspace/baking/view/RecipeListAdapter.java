@@ -59,11 +59,11 @@ class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeVie
         return recipeList.size();
     }
 
-    public class RecipeViewHolder extends RecyclerView.ViewHolder {
+    static class RecipeViewHolder extends RecyclerView.ViewHolder {
         Recipe recipe;
         ItemRecipeListBinding binding;
 
-        public RecipeViewHolder(@NonNull ItemRecipeListBinding binding) {
+        RecipeViewHolder(@NonNull ItemRecipeListBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
@@ -82,7 +82,7 @@ class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.RecipeVie
         mainViewModel.getMutableRecipeList().setValue(recipeList);
     }
 
-    public void selectPosition(int position) {
+    void selectPosition(int position) {
         if(position >= 0 && position < recipeList.size()) {
             recipeList.get(position).selected = true;
             //notifyItemChanged(position);

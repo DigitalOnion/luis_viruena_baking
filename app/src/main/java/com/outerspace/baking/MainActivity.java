@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 

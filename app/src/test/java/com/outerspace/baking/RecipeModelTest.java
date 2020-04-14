@@ -1,7 +1,5 @@
 package com.outerspace.baking;
 
-import android.util.Log;
-
 import androidx.core.util.Consumer;
 
 import com.outerspace.baking.api.Recipe;
@@ -13,11 +11,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
-
-import timber.log.Timber;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class RecipeModelTest {
 
@@ -74,15 +67,15 @@ public class RecipeModelTest {
         Assert.assertNotNull(recipes);
     }
 
-    private class ConsumerOnThread<T> implements Consumer<T> {
+    private static class ConsumerOnThread<T> implements Consumer<T> {
         private T t;
         private Thread thread;
 
-        public void setThread(Thread thread) {
+        void setThread(Thread thread) {
             this.thread = thread;
         }
 
-        public T getAccepted() {
+        T getAccepted() {
             return t;
         }
 

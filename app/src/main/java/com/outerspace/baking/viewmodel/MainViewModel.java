@@ -9,7 +9,6 @@ import com.outerspace.baking.helper.StepAbstract;
 import java.util.List;
 
 public class MainViewModel extends ViewModel {
-    // mutableRecipeList and MutableNetworkError do not need to have a setter. They work on the network call.
     private MutableLiveData<List<Recipe>> mutableRecipeList = new MutableLiveData<>();
     public MutableLiveData<List<Recipe>> getMutableRecipeList() { return mutableRecipeList; }
 

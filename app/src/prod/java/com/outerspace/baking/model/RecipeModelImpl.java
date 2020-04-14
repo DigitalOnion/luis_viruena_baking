@@ -7,9 +7,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.outerspace.baking.api.Recipe;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.net.HttpURLConnection;
 import java.util.List;
-import java.util.logging.Handler;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,7 +43,7 @@ class RecipeModelImpl implements IRecipeModel {
     private Callback<List<Recipe>> getCallback(Consumer<List<Recipe>> recipeListConsumer, Consumer<Integer> networkErrorConsumer) {
         return new Callback<List<Recipe>>() {
             @Override
-            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
+            public void onResponse(@NotNull Call<List<Recipe>> call, @NotNull Response<List<Recipe>> response) {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
                     recipeListConsumer.accept(response.body());
                 } else {
@@ -51,7 +52,7 @@ class RecipeModelImpl implements IRecipeModel {
             }
 
             @Override
-            public void onFailure(Call<List<Recipe>> call, Throwable t) {
+            public void onFailure(@NotNull Call<List<Recipe>> call, Throwable t) {
                 networkErrorConsumer.accept(HttpURLConnection.HTTP_BAD_REQUEST);
             }
         };

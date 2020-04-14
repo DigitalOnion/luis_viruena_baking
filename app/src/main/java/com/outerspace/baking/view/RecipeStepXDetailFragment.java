@@ -16,8 +16,9 @@ import android.widget.FrameLayout;
 import com.outerspace.baking.R;
 import com.outerspace.baking.databinding.FragmentRecipeDetailNStepBinding;
 
+import org.jetbrains.annotations.NotNull;
+
 public class RecipeStepXDetailFragment extends Fragment {
-    private IMainView mainView;
     private FragmentRecipeDetailNStepBinding binding;
     private RecipeStepsFragment detailFragment;
     private RecipeDetailFragment stepsFragment;
@@ -30,7 +31,7 @@ public class RecipeStepXDetailFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_detail_n_step, container, false);
         return binding.getRoot();
@@ -41,16 +42,6 @@ public class RecipeStepXDetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         appendFragment(binding.detailLayout, detailFragment);
         appendFragment(binding.stepsLayout, stepsFragment);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if(context instanceof IMainView) {
-            mainView = (IMainView) context;
-        } else {
-            throw new ClassCastException("must implement IMainView");
-        }
     }
 
     public void addComposedFragment(Fragment fragment) {
